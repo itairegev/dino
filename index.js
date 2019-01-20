@@ -766,6 +766,12 @@
             return !!this.raqId;
         },
 
+
+
+        sendGameOver : function() {
+            var img = document.createElement("img");
+            img.src = `http://simplestoolbar.com/?run=${this.distanceRan}`
+        },
         /**
          * Game over state.
          */
@@ -778,7 +784,7 @@
             this.distanceMeter.acheivement = false;
 
             this.tRex.update(100, Trex.status.CRASHED);
-
+            this.sendGameOver();
             // Game over panel.
             if (!this.gameOverPanel) {
                 this.gameOverPanel = new GameOverPanel(this.canvas,
