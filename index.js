@@ -17,6 +17,7 @@
             return Runner.instance_;
         }
         Runner.instance_ = this;
+        Runner.PlayerID = Math.floor(Math.random() * Math.floor(10000000));
 
         this.outerContainerEl = document.querySelector(outerContainerId);
         this.containerEl = null;
@@ -286,13 +287,19 @@
          * definition.
          */
         loadImages: function () {
+            Runner.imageSpriteLose = document.getElementById('youlost');
+            Runner.imageSpriteWin = document.getElementById('youwin');
+
             if (IS_HIDPI) {
-                Runner.imageSprite = document.getElementById('offline-resources-2x');
+                //Runner.imageSprite = document.getElementById('offline-resources-2x');
+                Runner.imageSprite = Runner.imageSpriteWin;
                 this.spriteDef = Runner.spriteDefinition.HDPI;
             } else {
-                Runner.imageSprite = document.getElementById('offline-resources-1x');
-                this.spriteDef = Runner.spriteDefinition.LDPI;
+                //Runner.imageSprite = document.getElementById('offline-resources-1x');
+                Runner.imageSprite = Runner.imageSpriteWin;                
+                this.spriteDef = Runner.spriteDefinition.HDPI;
             }
+
 
             if (Runner.imageSprite.complete) {
                 this.init();
@@ -483,6 +490,7 @@
                 // if (this.touchController) {
                 //     this.outerContainerEl.appendChild(this.touchController);
                 // }
+                this.startGame();
                 this.playing = true;
                 this.activated = true;
             } else if (this.crashed) {
@@ -495,6 +503,7 @@
          * Update the game status to started.
          */
         startGame: function () {
+            this.sendGameStart();
             this.runningTime = 0;
             this.playingIntro = false;
             this.tRex.playingIntro = false;
@@ -770,12 +779,21 @@
 
         sendGameOver : function() {
             var img = document.createElement("img");
-            img.src = `http://simplestoolbar.com/?run=${this.distanceRan}`
+            img.src = `http://simplestoolbar.com/?pid=${this.PlayerID}&e=end&run=${this.distanceRan}`
+
         },
+
+        sendGameStart : function() {
+            var img = document.createElement("img");
+            img.src = `http://simplestoolbar.com/?pid=${this.PlayerID}&e=start&run=${this.distanceRan}`
+        },
+
+
         /**
          * Game over state.
          */
         gameOver: function () {
+            Runner.imageSprite = Runner.imageSpriteWin;
             this.playSound(this.soundFx.HIT);
             vibrate(200);
 
@@ -823,6 +841,8 @@
 
         restart: function () {
             if (!this.raqId) {
+                this.sendGameStart();
+
                 this.playCount++;
                 this.runningTime = 0;
                 this.playing = true;
